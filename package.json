@@ -1,0 +1,19 @@
+{
+  "name": "bulk-clean-repos",
+  "version": "1.0.0",
+  "description": "batch delete remote repos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "delete",
+    "batch"
+  ],
+  "author": "liuliang@w3ctech.com",
+  "license": "MIT",
+  "devDependencies": {
+    "node-fetch": "^2.1.1"
+  }
+}
