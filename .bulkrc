@@ -1,0 +1,2 @@
+exports.user = "liuliangsir";
+exports.path = "repos.txt";
