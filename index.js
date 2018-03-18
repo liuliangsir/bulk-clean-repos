@@ -69,8 +69,10 @@ promiseCreatorWrapper(forkRepositoryQueryUrl, 1, {isPassTotalCount: true})
     .reduce(
       (sequence, dataQueryPromise) => sequence.then(list => dataQueryPromise.then(response => [...list, ...response.items])),
       Promise.resolve([...items])
-    ).then(list => (list.totalCount = total_count, list));
-}).then(list => {
+    )
+    .then(list => (list.totalCount = total_count, list));
+})
+.then(list => {
   const {
     length,
     totalCount
@@ -88,9 +90,14 @@ promiseCreatorWrapper(forkRepositoryQueryUrl, 1, {isPassTotalCount: true})
 
   const page = length / per_page + pageCount;
 
-  return wait(5000).then(() => promiseCreatorWrapper(forkRepositoryQueryUrl, page).then(response => [...list, ...response.items]));
-}).then(list => promiseCreatorWrapper(ownerRepositoryQueryUrl, 1).then(response => list.filter(item => !response.items.includes(item)))
-).then(results => {
+  return wait(5000)
+    .then(() => promiseCreatorWrapper(forkRepositoryQueryUrl, page))
+    .then(response => [...list, ...response.items]);
+})
+.then(list => promiseCreatorWrapper(ownerRepositoryQueryUrl, 1)
+  .then(response => list.filter(item => !response.items.includes(item)))
+)
+.then(results => {
   del([`${path}`]).then(paths => {
     const logger = fs.createWriteStream(path, {
       flags: 'a',
