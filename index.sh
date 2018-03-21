@@ -1,3 +1,11 @@
+#!/usr/bin/bash
 chmod +x index.sh
 
-while read repo; do curl -i -H 'Authorization: token {xxx}' -X 'DELETE' 'https://api.github.com/repos/$repo'; done < repos.txt
+filename="repos.txt"
+token=""
+
+while read -r line;
+do
+    name="$line"
+    curl -X "DELETE" -H "Authorization: token $token" "https://api.github.com/repos/$name ";
+done < "$filename"

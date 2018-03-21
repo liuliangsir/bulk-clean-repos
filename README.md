@@ -23,6 +23,9 @@ This project is to showcase how to clean all the forked repos from a git reposit
 
 [Peripona/bulk-clean-repos](https://github.com/Peripona/bulk-clean-repos)
 
+[is-it-possible-to-remove-a-remote-repository-on-github-through-the-command-line](https://stackoverflow.com/questions/25381329/is-it-possible-to-remove-a-remote-repository-on-github-through-the-command-line)
+
+[How to delete a GitHub repo using the API](https://stackoverflow.com/questions/19319516/how-to-delete-a-github-repo-using-the-api)
 ### Troubleshooting
 
 - [Only the first 1000 search results are available](https://stackoverflow.com/questions/37602893/github-search-limit-results)
