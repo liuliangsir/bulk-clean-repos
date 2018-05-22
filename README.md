@@ -1,5 +1,7 @@
 # bulk-clean-repos
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/liuliangsir/bulk-clean-repos.svg)](https://greenkeeper.io/)
+
 This project is to showcase how to clean all the forked repos from a git repository using shell and node
 
 ## Delete all forked repos
