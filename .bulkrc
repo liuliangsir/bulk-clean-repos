@@ -1,2 +1,5 @@
 exports.user = "liuliangsir";
 exports.path = "repos.txt";
+exports.per_page = 50;
+exports.created = '2014-07-02T16:39:23Z';
+exports.maximum_first_search_results = 1e3;

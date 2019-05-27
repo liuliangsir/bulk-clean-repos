@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 chmod +x index.sh
 
 filename="repos.txt"

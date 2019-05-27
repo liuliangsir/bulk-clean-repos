@@ -3,23 +3,26 @@ const fs = require('fs');
 const del = require('del');
 
 const {
+  flip,
+  wait
+} = require('./lib/helper');
+const {
+  created,
   path,
+  per_page,
+  maximum_first_search_results,
   user
 } = require('./.bulkrc');
-
-const per_page = 50;
-const MAXIMUM_FIRST_SEARCH_RESULTS = 1e3;
-const created = '2014-07-02T16:39:23Z';
-const pages = [];
-const pageRegexp = /(?<=&page=)[^&]+/g;
 
 const forkRepositoryQueryUrl = `https://api.github.com/search/repositories?q=user:${user}+fork:true+created:>=${created}&sort=created&order=asc&per_page=${per_page}`;
 const ownerRepositoryQueryUrl = `https://api.github.com/search/repositories?q=user:${user}&order=desc&per_page=${per_page}`;
 
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-const flip = func => (first, ...rest) => func(...rest, first);
+const [
+  pages,
+  pageRegexp
+] = [[], /(?<=&page=)[^&]+/g];
 
-const filterResponseData = (response, {isPassTotalCount = false, url} = {}) => {
+const filterResponseData = (response, optionalArg) => {
   const {
     total_count = 0,
     incomplete_results = false,
@@ -27,6 +30,10 @@ const filterResponseData = (response, {isPassTotalCount = false, url} = {}) => {
     message,
     documentation_url
   } = response || {};
+  const {
+    isPassTotalCount = false,
+    url
+  } = optionalArg || {}
 
   if (message) {
     pages.push(+url.match(pageRegexp));
@@ -34,11 +41,9 @@ const filterResponseData = (response, {isPassTotalCount = false, url} = {}) => {
   }
 
   const realResponse = {};
-
   if (isPassTotalCount) {
     realResponse.total_count = total_count;
   }
-
   realResponse.items = items.map(item => item.full_name);
 
   return realResponse;
@@ -49,21 +54,27 @@ const promiseCreator = (url, callback) => {
     .then(response => response.json())
     .then(callback);
 };
-const promiseCreatorWrapper = (urlPrefix, page, config = {isPassTotalCount: false}) => {
+const promiseCreatorWrapper = (urlPrefix, page, config = { isPassTotalCount: false }) => {
   const pageQueryUrl = `${urlPrefix}&page=${page}`;
-  const callback = flip(filterResponseData).bind(null, {url: pageQueryUrl, ...config});
+  const callback = (
+    flip(filterResponseData)
+      .bind(
+        Object.create(null),
+        { url: pageQueryUrl, ...config }
+      )
+  )
 
   return promiseCreator(pageQueryUrl, callback);
 };
 
-promiseCreatorWrapper(forkRepositoryQueryUrl, 1, {isPassTotalCount: true})
+promiseCreatorWrapper(forkRepositoryQueryUrl, 1, { isPassTotalCount: true })
 .then(response => {
-  const {total_count, items = []} = response || {};
+  const { total_count, items = [] } = response || {};
   const length = Math.ceil(total_count / per_page) - 1;
   const offset = 2;
 
   return Object
-    .keys(Array.apply(null, {length}))
+    .keys(Array.apply(null, { length }))
     .map(value => value - 0 + offset)
     .map(page => promiseCreatorWrapper(forkRepositoryQueryUrl, page))
     .reduce(
@@ -83,8 +94,8 @@ promiseCreatorWrapper(forkRepositoryQueryUrl, 1, {isPassTotalCount: true})
     case !list.length: {
       return list;
     }
-    case totalCount - length >= MAXIMUM_FIRST_SEARCH_RESULTS || pageCount > pages.length: {
-      return new Error(`the page count should less than 1 and the left result should less than ${MAXIMUM_FIRST_SEARCH_RESULTS}`);
+    case totalCount - length >= maximum_first_search_results || pageCount > pages.length: {
+      return new Error(`the page count should less than 1 and the left result should less than ${maximum_first_search_results}`);
     }
   }
 
