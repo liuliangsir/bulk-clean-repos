@@ -17,6 +17,6 @@
     "del": "^3.0.0"
   },
   "dependencies": {
-    "node-fetch": "^2.1.1"
+    "node-fetch": "^2.6.1"
   }
 }
